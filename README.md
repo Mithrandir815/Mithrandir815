@@ -25,30 +25,30 @@
 スキルセット
 Android 3年
 アーキテクチャ - MVVM
-使用ライブラリ - Jetpack compose/Retrofit/Coroutine Flow/Multi Module/Junit/Moshi/Mock
-CD/CI - Bitris
-Data - Firebase
-環境 - Git/Pay Console
+<br>使用ライブラリ - Jetpack compose/Retrofit/Coroutine Flow/Multi Module/Junit/Moshi/Mock
+<br>CD/CI - Bitris
+<br>Data - Firebase
+<br>環境 - Git/Pay Console
 
 Go 2年
-フレームワーク - echo
-DB - postgreSQL/redis
-Message Que - rabbitmq
-環境 - Docker/Kubernetes
+<br>フレームワーク - echo
+<br>DB - postgreSQL/redis
+<br>Message Que - rabbitmq
+<br>環境 - Docker/Kubernetes
 
 ruby 2年
-フレームワーク - rails
-DB - Mysql
-サーバー - Heroku
+<br>フレームワーク - rails
+<br>DB - Mysql
+<br>サーバー - Heroku
 
 BlockChain - 1年
-使用通貨 - Ethereum
-言語 Node.js/ Solidity
-DB - ifps
+<br>使用通貨 - Ethereum
+<br>言語 Node.js/ Solidity
+<br>DB - ifps
 
 VB 1年
-フレームワーク - .NET
-DB - Oracle
+<br>フレームワーク - .NET
+<br>DB - Oracle
 
 ## My Job career
 

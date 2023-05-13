@@ -16,24 +16,28 @@
 </br>Data - Firebase
 </br>環境 - Git/Pay Console
 
-Go 2年
-</br>フレームワーク - echo
+#### Go 2年
+
+フレームワーク - echo
 </br>DB - postgreSQL/redis
 </br>Message Que - rabbitmq
 </br>環境 - Docker/Kubernetes
 
-ruby 2年
-</br>フレームワーク - rails
+#### ruby 2年
+
+フレームワーク - rails
 </br>DB - Mysql
 </br>サーバー - Heroku
 
-BlockChain - 1年
-</br>使用通貨 - Ethereum
+#### BlockChain - 1年
+
+使用通貨 - Ethereum
 </br>言語 Node.js/ Solidity
 </br>DB - ifps
 
-VB 1年
-</br>フレームワーク - .NET
+#### VB 1年
+
+フレームワーク - .NET
 </br>DB - Oracle
 
 ## My Job career
@@ -48,6 +52,7 @@ VB 1年
     - 新規画面の作成: 他のクライアント・デザイナー・バックエンドのチームと連携しての開発
     - リファクタリング: Jetpack compose/Retrofit/Coroutine Flowの導入
     - Google Play Store Consoleにてリリース
+    - インターン生の教育
 
 ---
 
@@ -58,6 +63,12 @@ VB 1年
 #### 業務内容
 
  1. 決済サービスの要件定義から開発まで
+    - 使用スキル [Go](#go-2年)
+    - マイクロサービスを運用しておりバックエンドのgatewayサーバー, 認証サーバー，決済サーバーの開発をしていました。
+ 2. 決済Androidアプリの開発
+    - Androidの決済アプリをバックエンドと連携して運用できるようにかいはつしていました
+ 3. 人事サイトの保守
+    - PHPのSymphonyを使用したアプリの保守をおこなっていました
 
 ---
 
@@ -86,3 +97,7 @@ VB 1年
 
 ## 👯Looking for
 
+副業を探しています。
+平日週20時間～　土日も可能です
+Androidエンジニア、フロント、バックエンドで探しています。
+お誘いいただける方[twitter](https://twitter.com/gorillaz815)にDMいただきたいです。

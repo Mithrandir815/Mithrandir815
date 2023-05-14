@@ -1,6 +1,10 @@
 ## I am
 株式会社ドワンゴにてN予備校のAndroid Appの開発をしている飯田剛通です。
 エンジニア歴は5年くらいになります。
+副業を探しています。
+平日週20時間～　土日も可能です
+Androidエンジニア、フロント、バックエンドで探しています。
+お誘いいただける方[twitter](https://twitter.com/gorillaz815)にDMいただきたいです。
 
 ## 🔭My Skil
 <img src="./kotlin-icon.png" width="50" ><img src="./android-vertical.png" width="50" ><img src="./ruby.png" width="50" height="50" ><img src="./rails.png" width="50" height="50" ><img src="./python.png" width="50" height="50" ><img src="./django-icon.png" width="50" height="50" ><img src="./docker-icon.png" width="50" height="50" ><img src="./kubernetes.png" width="50" height="50" ><img src="./google-play-icon.png" width="50" height="50" >
@@ -97,10 +101,3 @@
 2. 体験会でのセールス
 
 ---
-
-## 👯Looking for
-
-副業を探しています。
-平日週20時間～　土日も可能です
-Androidエンジニア、フロント、バックエンドで探しています。
-お誘いいただける方[twitter](https://twitter.com/gorillaz815)にDMいただきたいです。

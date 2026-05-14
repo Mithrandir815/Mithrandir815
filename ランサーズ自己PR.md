@@ -50,11 +50,53 @@
   - GrandPyramid / TourGator / Japan Documented の WordPress 改修・コード化・運用
   - 非エンジニアの誤操作を防ぐ管理画面ガードレール機能（月次リンク変更ボタン等）の実装
 
-### 🤖 AI エージェント開発（Claude Agent SDK）
+### 🤖 AI 駆動開発・運用（Claude Code × Gemini CLI × Claude Agent SDK）
+
+本業・副業の両方で **AI を主力開発エージェント** として日常運用しており、単なる「コード補完ツール」ではなく **CLAUDE.md によるルールエンジン整備・Sub-Agent 分業・コスト最適化** までを含めた運用ノウハウを蓄積しています。
+
+#### Claude Code（Anthropic）の活用
+- **役割**: ターミナル統合の `claude` CLI を主力エージェントとして、アーキテクチャ設計・複数ファイル横断のリファクタリング・セキュリティレビュー・CI/CD ワークフロー生成・コミット／PR 作成までを担当させる運用
+- **CLAUDE.md 設計**: 各プロジェクトのルートに `CLAUDE.md` を配置し、以下を明文化して AI を「そのプロジェクト専属エンジニア」化:
+  - セキュリティ必須ルール（`esc_html()` / `$wpdb->prepare()` / nonce / Capability check 等）
+  - コーディング規約（インデント・プレフィックス・`declare(strict_types=1)` 等）
+  - 環境前提（Docker Compose / WP-CLI エイリアス / Next.js Server Actions 等）
+  - 禁止事項（コアファイル直接編集・`eval()`・`wp-config.php` への書き込み 等）
+- **プラン運用**: Claude Pro → **Claude Max** へアップグレードし、トークン消費量・チームでの利用権共有を含めた契約最適化までを担当
+
+#### Gemini CLI（Google）の活用
+- **役割**: 最大 100 万トークンのコンテキストウィンドウを活かし、コードベース全域の一括スキャン・ドキュメント初稿生成・依存関係マッピングに活用
+- **Search grounding**: WordPress / Next.js / 各種 API の最新仕様取得に Google Search grounding を利用し、AI の知識カットオフ問題を回避
+- **Google API 連携**: Search Console API / Analytics API / Google Business Profile API 等、Google エコシステム連携コードの初稿生成
+
+#### Sub-Agent 運用ルール（案件レベルで標準化）
+- **分業ルール**: トークン消費を抑える観点から **広域調査・ドキュメント初稿・全域スキャン → Gemini CLI**、**実装・コミット・PR → Claude Code** に分担。Gemini の出力は必ず Claude がレビューしてから適用するフローを Rissun 等の案件で運用ルール化
+- **使い分けチートシート**:
+
+| タスク | 担当 | 理由 |
+|--------|------|------|
+| アーキテクチャ設計・複雑なリファクタリング指示 | Claude | 推論品質・指示忠実度 |
+| コードベース全体の一括解析・初稿ドキュメント生成 | Gemini | 大規模コンテキスト |
+| 最新仕様の取得（WordPress / Next.js / Google API） | Gemini | Search grounding |
+| セキュリティレビュー（XSS / SQLi / CSRF） | Claude | セキュリティ判断の精度 |
+| Google API 連携コード生成 | Gemini | Google エコシステム理解 |
+| 実装・コミット・PR 作成 | Claude Code | 直接ファイル操作・Git 操作 |
+
+#### Claude Agent SDK によるエージェント設計
 - **構成**: Next.js 15 + Claude Agent SDK (TypeScript) + Supabase + 既存 n8n
-- **モデル運用**: Claude Sonnet 4.6 を主軸に、深掘り時のみ Opus 4.7 にフォールバック。Prompt Caching でコスト圧縮
-- **実績例**:
-  - 海外マーケ X 自動投稿 MVP「KaigaiMarkeStudio」を設計（Reddit / RSS 由来のトレンド収集 → Research / Writer / Critic の 3 エージェント連携 → n8n 経由で予約投稿）
+- **モデル運用**: Sonnet 4.6 を主軸に、`fallbackModel` で深掘り時のみ Opus 4.7 に切替える二段構成
+- **Prompt Caching**: System Prompt と過去高評価データセットをキャッシュ対象化し、Claude API コストを **30〜50% 圧縮**
+- **エージェント協調**: Research（情報収集）→ Writer（文章生成 3 案）→ Critic（事実誤認・炎上・CTA・ハッシュタグの投稿前チェック）の **3 エージェント協調パイプライン** を設計
+- **コスト管理**: Anthropic コンソールでの月予算アラート設定、月額 $5〜10（約 750〜1,500 円）に収めるコスト設計
+
+#### WordPress × AI-CLI 連携の開発フロー整備
+- **Docker Compose 環境**: ローカル開発を Docker Compose 化し、`d-wp = docker compose exec -u www-data wordpress wp` のエイリアス経由で WP-CLI を AI から叩かせる構成を整備
+- **AI 主導の運用**: 「`d-wp theme list` でテーマを確認 → 該当 PHP の WPCS 違反を修正」「`d-wp post list --format=json` から取得して特定 ACF を一括更新」など、AI が WP-CLI を組み合わせて自律実行するワークフローを構築
+- **GitHub Actions × AI レビュー**: PR に対して AI がセキュリティチェックを実行する CI を設計
+
+#### 実績例
+- クチコミ生成 SaaS「Rissun」: Gemini API（2.0 Flash / 2.5 Flash Lite）でアンケート→クチコミ文生成。Sub-Agent 運用ルールを案件レベルで標準化
+- 海外マーケ X 自動投稿 MVP「KaigaiMarkeStudio」: Claude Agent SDK で 3 エージェント協調パイプラインを設計（Reddit / RSS 収集 → Research → Writer → Critic → n8n 連携予約投稿）
+- WordPress 案件群（GrandPyramid / TourGator / Japan Documented）: CLAUDE.md による WPCS 準拠の自律開発フロー、Docker × AI-CLI 連携の整備
 
 ### 🌐 バックエンド開発 **4年の実務経験**
 - **Go**: Echo, PostgreSQL, Redis, RabbitMQ使用のマイクロサービス開発
@@ -96,6 +138,14 @@
 - ✅ 技術選定のアドバイス
 - ✅ チーム開発体制の構築支援
 
+### AI 駆動開発の導入支援
+- ✅ Claude Code / Gemini CLI を用いた開発フローの導入・運用設計
+- ✅ プロジェクト固有 **CLAUDE.md**（セキュリティ制約・規約・環境前提）の設計と運用定着
+- ✅ Sub-Agent 分業ルール（広域調査=Gemini ／ 実装=Claude）の整備
+- ✅ Claude Agent SDK を用いたマルチエージェント・アプリケーションの設計・実装
+- ✅ Prompt Caching・モデル使い分け（Sonnet / Opus / Gemini Flash）による API コスト最適化
+- ✅ WordPress × AI-CLI（Docker + WP-CLI）連携環境の構築
+
 ## 💡 強み・特徴
 
 ### 🔄 フルスタック対応力
@@ -109,6 +159,9 @@
 
 ### ⚡ 迅速な学習・適応力
 新しい技術やフレームワークへの習得が早く、プロジェクトの要求に応じて柔軟に対応できます。
+
+### 🤖 AI を「現場で運用」できる実践力
+Claude Code・Gemini CLI・Claude Agent SDK を本業／副業の両方で日常的に運用しています。単なる利用者ではなく、**CLAUDE.md によるルールエンジン整備・Sub-Agent 分業ルール策定・Prompt Caching でのコスト圧縮**まで含めて運用設計しており、AI を「現場のエンジニアリングパートナー」として安全に組み込むノウハウを提供できます。
 
 ## 📞 お仕事のご相談について
 

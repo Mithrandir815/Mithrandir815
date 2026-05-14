@@ -41,6 +41,15 @@
 - **コンテンツ設計:** ACF ローカル JSON、CPT 登録のコード化（`mu-plugins/cpt-register.php`）、Elementor テンプレートの JSON 管理。
 - **運用:** SSH / WP-CLI でのデプロイ、All-in-One WP Migration によるサーバー移行、SEO 強化（All in One SEO / 構造化データ）。
 
+#### AI 駆動開発 / LLM 運用: Claude Code × Gemini CLI を主力に運用中
+- **Claude Code (Anthropic):** ターミナル統合の `claude` CLI を本業・副業双方の主力開発エージェントとして運用。アーキテクチャ設計・複数ファイル横断のリファクタリング・セキュリティレビュー・CI ワークフロー生成までを担当させ、コミット／PR 作成まで実行させる運用フローを確立。
+- **Gemini CLI (Google):** 最大 100 万トークンのコンテキストウィンドウと Google Search grounding を活かし、コードベース全域の一括スキャン・ドキュメント初稿生成・最新仕様（WordPress / Next.js / 各種 API）の grounding 取得に活用。
+- **Sub-Agent 運用ルール:** トークン消費を抑える観点から、広域調査・ドキュメント初稿・全域スキャンは Gemini CLI、実装・コミット・PR は Claude Code に分担。Gemini の出力は必ず Claude がレビューしてから適用するフローを Rissun 等の案件で標準化。
+- **CLAUDE.md 設計:** プロジェクト固有のセキュリティ制約（`esc_html` / `$wpdb->prepare` / nonce 等）・コーディング規約・環境前提（Docker Compose / WP-CLI エイリアス）・禁止事項を CLAUDE.md に明文化し、AI を「そのプロジェクト専属エンジニア」として振る舞わせる運用を全副業案件で適用。
+- **Claude Agent SDK (TypeScript):** Next.js + Claude Agent SDK の構成で、Research / Writer / Critic の 3 エージェント協調パイプラインを設計（KaigaiMarkeStudio）。Sonnet 4.6 を主軸に、深掘り時のみ Opus 4.7 へフォールバック。System Prompt を Prompt Caching 対象として API コストを 30〜50% 圧縮。
+- **モデル選定基準:** タスクに応じて Claude（推論品質・セキュリティ判断・指示忠実度）と Gemini（大規模コンテキスト・Search grounding・Google API 連携）を使い分け。各モデルの料金プラン（Claude Max 等）と API 従量課金の運用最適化も担当。
+- **WordPress × AI-CLI 連携:** Docker Compose 上の WordPress を `d-wp = docker compose exec -u www-data wordpress wp` のエイリアス経由で Claude / Gemini に叩かせる開発フローを整備。AI 側に環境前提を渡し、CPT 追加・カスタムブロック生成・WPCS 準拠リファクタリングを自律実行させる。
+
 #### Go: 2年
 - **フレームワーク:** Echoを用いたAPIサーバー開発。
 - **データベース:** PostgreSQL, Redisとの連携。
@@ -92,7 +101,9 @@
 本業と並行して、Web サービスの新規開発・運用案件を複数並行で担当しています。要件定義から DB 設計・実装・テスト・デプロイ・運用までを一人ないし小規模チームで完結させており、特に Next.js（App Router）+ Supabase スタックと WordPress（Bedrock 構成）の 2 軸で稼働中です。
 
 -   **クチコミ生成 SaaS「Rissun（りっすん）」:**
-    -   QR コード × AI 生成 × 多言語（8 言語）対応のクチコミ生成・Google マップ投稿 SaaS の主担当。Next.js 16 (App Router) + Supabase + Square（サブスクリプション課金）で構成。
+    -   QR コード × AI 生成 × 多言語（8 言語）対応のクチコミ生成・Google マップ投稿 SaaS の主担当。Next.js 16 (App Router) + Supabase + Square（サブスクリプション課金）+ Google Gemini（2.0 Flash / 2.5 Flash Lite）で構成。
+    -   AI クチコミ生成エンジンを実装。Gemini API でユーザーアンケート回答からブランドトーンに沿ったクチコミ文を生成し、`survey_answers` への選択時テキストのスナップショット保存設計でマスター変更の影響を回避。
+    -   Sub-Agent 運用を案件レベルで標準化。広域調査・ドキュメント初稿・全域スキャンを Gemini CLI、実装・コミット・PR を Claude Code に分担し、Gemini の出力は必ず Claude がレビューしてから適用するルールを CLAUDE.md に明文化。
     -   Square 課金システムを実装。サブスクリプションの開始／停止フロー、割引コード（first_only / recurring）、HMAC + 冪等性保証付き Webhook、Bitwarden 連携の環境変数管理スクリプト、Square Sandbox 用ドキュメント整備までを一貫対応。
     -   Storybook v8 + MSW によるモック駆動 UI カタログを整備。Supabase クライアントや Server Actions、`next/navigation`、`googleapis` を MSW ハンドラで差し替え、CI（GitHub Actions）に Storybook ビルド・Jest・lint・型チェックを組み込み、UI コンポーネントの回帰検知を自動化。
     -   アナリティクス基盤を構築。PostgreSQL RPC で集計し `recharts` で可視化、CSV エクスポートは Shift_JIS（CP932）対応・期間指定・アンケート別 ZIP 出力に拡張。`analysis` タブを遅延ロード化してダッシュボード初期表示を高速化。
@@ -112,9 +123,12 @@
 -   **WordPress 案件（GrandPyramid / TourGator / Japan Documented）:**
     -   既存 WordPress サイトの **Bedrock 化（Composer 管理化）** を主導。CPT 登録のコード化、ACF ローカル JSON 化、Elementor テンプレートの JSON 管理、`hello-elementor` 親テーマや主要プラグインの `wpackagist` 経由導入を実施し、SSH/WP-CLI によるデプロイ運用フローを確立。
     -   All-in-One WP Migration を用いたサーバー移行、Elementor の `.e-con` 系 CSS の打ち消し、SEO 対策（All in One SEO 等）を実施。非エンジニアでも安全に運用できるよう、管理画面に「月次リンク変更ボタン」等のガードレール機能を実装。
+    -   Docker Compose 上の WordPress を `d-wp = docker compose exec -u www-data wordpress wp` エイリアス経由で AI-CLI に叩かせる開発フローを整備。CLAUDE.md に WordPress Coding Standards（`esc_html` / `$wpdb->prepare` / nonce / Capability check 等）と環境前提を明文化し、Claude Code に WPCS 準拠の CPT 追加・カスタムブロック生成・セキュリティリファクタリングを自律実行させる体制を構築。
 
 -   **海外マーケ自動投稿 MVP「KaigaiMarkeStudio」:**
-    -   Next.js 15 + **Claude Agent SDK** + Supabase + 既存 n8n を組み合わせた X（Twitter）自動投稿 MVP の設計。Reddit / RSS（Exploding Topics・JETRO・Shopify Blog）からのトレンド収集、Claude Sonnet 4.6 / Opus 4.7 を使い分けた Research / Writer / Critic エージェント構成、Prompt Caching によるコスト圧縮設計を担当。
+    -   Next.js 15 + **Claude Agent SDK (TypeScript)** + Supabase + 既存 n8n を組み合わせた X（Twitter）自動投稿 MVP の設計。Reddit / RSS（Exploding Topics・JETRO・Shopify Blog）からのトレンド収集 → Research / Writer / Critic の 3 エージェント協調 → 確定下書きを n8n 経由で予約投稿、という一連のパイプラインを設計。
+    -   モデル運用は **Claude Sonnet 4.6 を主軸、深掘り（`fallbackModel`）時のみ Opus 4.7** にフォールバックする二段構成。System Prompt を Prompt Caching 対象として API コストを 30〜50% 圧縮し、月額 $5〜10（約 750〜1,500 円）に収まるコスト設計を実現。
+    -   Anthropic コンソールでの月予算アラート（$15）設定、JSONB 肥大化対策（30 日 archive）、Reddit API のフェイルオーバー方針（連続失敗 3 回で自動 disable + Slack 通知）など、LLM API 運用上のリスクハンドリングまで設計に含める。
 
 ---
 
